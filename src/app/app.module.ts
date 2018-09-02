@@ -1,3 +1,4 @@
+import { AuthGuard } from './core/auth.guard';
 import { OwlModule } from 'ngx-owl-carousel';
 import { HttpClientModule } from '@angular/common/http';
 import { PackagesComponent } from './packages/packages.component';
@@ -35,9 +36,14 @@ import { PackageService } from './packages/shared/package.service';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { PackageListComponent } from "./packages/package-list/package-list.component";
 import { SliderComponent } from './slider/slider.component';
-
+import { CoreModule } from './core/core.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
+import { PhoneLoginComponent } from './phone-login/phone-login.component';
+import * as firebase from 'firebase';
+import { UserProfileComponent } from './user-profile/user-profile.component';
+
+firebase.initializeApp(environment.firebaseConfig);
 
 @NgModule({
   declarations: [
@@ -51,7 +57,9 @@ import { CarouselModule } from 'ngx-bootstrap/carousel';
     PackageComponent,
     PackagesComponent,
     PackageListComponent,
-    SliderComponent
+    SliderComponent,
+    PhoneLoginComponent,
+    UserProfileComponent
 
   ],
   imports: [
@@ -66,9 +74,10 @@ import { CarouselModule } from 'ngx-bootstrap/carousel';
     ReactiveFormsModule,
     HttpClientModule,
     CarouselModule.forRoot(),
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    CoreModule
   ],
-  providers: [PackageService],
+  providers: [PackageService, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
