@@ -1,0 +1,38 @@
+<div class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 ml-auto mr-auto text-center">
+                <h2 class="title">Packages</h2>
+            </div>
+        </div>
+       <div class="row"> 
+            <div class="col-lg-3 col-md-4 col-xs-6" *ngFor="let p of packageList | async">
+                <h4>{{ p.name }}</h4>
+                <a href="javascript:void()" (click)="showModal(p.gallery)">  <!--[routerLink]="['/packagelist', p.guid]"-->
+                    <img class="img-rounded img-responsive" src="{{p.imgUrl}}" alt="">
+                </a>
+            </div>           
+        </div>
+        <div class="row" style="margin-top:50px">
+            <div class="col-md-8 ml-auto mr-auto text-center">
+               <button class="btn btn-default" type="button" [routerLink]="['/packagelist']">View All</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div *ngIf="isModalShown" [config]="{ show: true, ignoreBackdropClick: true }" (onHidden)="onHidden()" bsModal #autoShownModal="bs-modal"
+    class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-auto-name">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="margin-top: -50px;">
+            <div class="modal-header">
+                <h4 id="dialog-sizes-name1" class="modal-title pull-left">Gallery</h4>
+                <button type="button" class="close pull-right" (click)="hideModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+            </div>
+            <div class="modal-body">
+                <slider [imagesUrl]="galleryImages" [imageHeight]="350" [slideIndicator]="true"></slider>             
+            </div>
+        </div>
+    </div>
+</div>

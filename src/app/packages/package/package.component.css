@@ -1,0 +1,6 @@
+em { float:right; color:indianred; padding-left: 10px; }
+.error input { 
+    border-color: indianred;
+    background-color:rgba(255, 0, 0, 0.2); 
+    color:indianred;
+};

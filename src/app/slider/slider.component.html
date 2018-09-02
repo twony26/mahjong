@@ -1,0 +1,9 @@
+<carousel [noWrap]="noWrapSlides" [showIndicators]="showIndicator" [interval]="myInterval" 
+[(activeSlide)]="activeSlideIndex" [noPause]="noPause" >
+  <slide *ngFor="let img of images" >
+    <img [src]="img.image" alt="first slide" [ngStyle]="{ 'display': 'block','width':'100%','height': height}" />
+    <div class="carousel-caption">
+      <p *ngIf="img.text">{{img.text}}</p>
+    </div>
+  </slide>
+</carousel>

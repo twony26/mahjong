@@ -1,0 +1,120 @@
+<div class="wrapper">
+    <div class="page-header page-header-xs" data-parallax="true" style="background-image: url('../assets/img/fabio-mangione.jpg');">
+        <div class="filter"></div>
+    </div>
+</div>
+<div class="section">
+    <div class="container">
+        <form [formGroup]="packageForm" (ngSubmit)="savePackage(packageForm.value)" autocomplete="off" novalidate>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.name.touched && packageForm.controls.name.invalid }">
+                        <label for="name">Name of Place</label>
+                        <em *ngIf="packageForm.controls.name.touched && packageForm.controls.name.invalid &&
+                                                        packageForm.controls.name.errors.required">Required</em>
+                        <input type="text" name="name" formControlName="name" placeholder="Name here..." class="form-control" id="name" required>
+                    </div>
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.contactNumber.touched && packageForm.controls.contactNumber.invalid }">
+                        <label for="contactNumber">Contact Number</label>
+                        <em *ngIf="packageForm.controls.contactNumber.touched && packageForm.controls.contactNumber.invalid &&
+                                                        packageForm.controls.contactNumber.errors.required">Required</em>
+                        <input type="text" name="contactNumber" formControlName="contactNumber" placeholder="Contact number here..." class="form-control"
+                            id="contactNumber" required>
+                    </div>
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.inclusions.touched && packageForm.controls.inclusions.invalid }">
+                        <label for="inclusions">Inclusions</label>
+                        <em *ngIf="packageForm.controls.inclusions.touched && packageForm.controls.inclusions.invalid &&
+                                                        packageForm.controls.inclusions.errors.required">Required</em>
+                        <input type="text" name="inclusions" formControlName="inclusions" placeholder="Inclusions here..." class="form-control" id="inclusions"
+                            required>
+                    </div>
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.minPersons.touched && packageForm.controls.minPersons.invalid }">
+                        <label for="minPersons">Mininum Person(s)</label>
+                        <em *ngIf="packageForm.controls.minPersons.touched && packageForm.controls.minPersons.invalid &&
+                                                        packageForm.controls.minPersons.errors.required">Required</em>
+                        <input type="number" min="1" name="minPersons" formControlName="minPersons" class="form-control" id="minPersons" required>
+                    </div>
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.maxPersons.touched && packageForm.controls.maxPersons.invalid }">
+                        <label for="maxPersons">Maximum Person(s)</label>
+                        <em *ngIf="packageForm.controls.maxPersons.touched && packageForm.controls.maxPersons.invalid &&
+                                                        packageForm.controls.maxPersons.errors.required">Required</em>
+                        <input type="number" min="1" name="maxPersons" formControlName="maxPersons" class="form-control" id="maxPersons" required>
+                    </div>
+
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.duration.touched && packageForm.controls.duration.invalid }">
+                        <label for="duration">Duration</label>
+                        <em *ngIf="packageForm.controls.duration.touched && packageForm.controls.duration.invalid &&
+                                                        packageForm.controls.duration.errors.required">Required</em>
+                        <input type="text" name="duration" formControlName="duration" placeholder="Duration here..." class="form-control" id="duration"
+                            required>
+                    </div>
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.description.touched && packageForm.controls.description.invalid }">
+                        <label for="description">Description</label>
+                        <em *ngIf="packageForm.controls.description.touched && packageForm.controls.description.invalid &&
+                                                        packageForm.controls.description.errors.required">Required</em>
+                        <input type="text" name="description" formControlName="description" placeholder="Description here..." class="form-control"
+                            id="description" required>
+                    </div>
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.address.touched && packageForm.controls.address.invalid }">
+                        <label for="address">Address</label>
+                        <em *ngIf="packageForm.controls.address.touched && packageForm.controls.address.invalid &&
+                                                        packageForm.controls.address.errors.required">Required</em>
+                        <input type="text" name="address" formControlName="address" placeholder="Address here..." class="form-control" id="address"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="imgUrl">Primary Image</label>
+                        <br>
+                        <input type="file" (change)="upload($event)" accept=".png,.jpg" #fileInput/>
+                        <br>
+                        <br>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-animated" [ngStyle]="{ 'width': currentUpload + '%' }"></div>
+                        </div>
+                        <br>
+                        <div *ngIf="image_url">
+                            <img [src]="image_url" width="400" height="300" #url/>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" (click)="showModal()">Gallery</button>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <button class="btn btn-outline-primary" type="submit">Add</button>
+                        <button class="btn btn-outline-warning" (click)="resetForm(packageForm)">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div *ngIf="isModalShown" [config]="{ show: true, ignoreBackdropClick: true }" (onHidden)="onHidden()" bsModal #autoShownModal="bs-modal"
+    class="modal fade" tabindex="-1" role="dialog" aria-labelledby="dialog-auto-name">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content" style="margin-top: -50px;">
+            <div class="modal-header">
+                <h4 id="dialog-sizes-name1" class="modal-title pull-left">Add Gallery</h4>
+                <button type="button" class="close pull-right" (click)="hideModal()" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+            </div>
+            <div class="modal-body">
+                <slider [imagesUrl]="uploadMultipleFiles" [imageHeight]="350" [slideIndicator]="true"></slider>
+                <br/>
+                <div *ngFor="let p of uploadedFiles">
+                    <label>{{ p.name }}</label>
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-animated" [ngStyle]="{ 'width': p.completed + '%' }"></div>
+                    </div>
+                </div>
+                <label>
+                <input #multiplefileInput type="file" (change)="detectFiles($event)"  accept="image/*" multiple>
+                </label>
+
+                <button [disabled]="uploadBtn" (click)="uploadMulti()" class="btn btn-primary" >Upload</button>
+            </div>
+        </div>
+    </div>
+</div>

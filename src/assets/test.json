@@ -1,0 +1,17 @@
+[
+    {
+        "name": "twon",
+        "age": 2,
+        "approved": false
+    },
+    {
+        "name": "boy",
+        "age": 3,
+        "approved": false
+    },
+    {
+        "name": "luke",
+        "age": 4,
+        "approved": false
+    }
+]

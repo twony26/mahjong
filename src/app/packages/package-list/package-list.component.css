@@ -1,0 +1,10 @@
+.section{
+    min-height: 600px;
+}
+img, a, .img-rounded{
+    cursor: pointer;
+}
+
+img:hover, a:hover, .img-rounded{
+    cursor: pointer;
+}

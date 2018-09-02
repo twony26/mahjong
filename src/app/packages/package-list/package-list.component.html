@@ -1,0 +1,153 @@
+<div class="wrapper">
+    <div class="page-header page-header-xs" data-parallax="true" style="background-image: url('../assets/img/fabio-mangione.jpg');">
+        <div class="filter"></div>
+    </div>
+</div>
+<div class="section" style="min-height: 600px;">
+    <div class="container">
+        <div class="row" *ngIf="modeView == 'listview'">
+            <div class="col-lg-4 col-md-6 col-xs-6" *ngFor="let p of (packageList | async)">
+                <h4>{{ p.name }}</h4>
+                <!--[routerLink]="['/viewpackage',p.guid]"-->
+                <a (click)="viewPackageDetail(p)" href="javascript:void()">
+                    <img class="img-rounded img-responsive" src="{{p.imgUrl}}" alt="{{p.name}}">
+                </a>
+                <h4>{{ p.description }}</h4>
+            </div>
+        </div>
+        <div class="row" *ngIf="modeView == 'viewpackage'">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="name">Name of Place</label>
+                    <h3>{{ packagedata.name }}</h3>
+                </div>
+                <div class="form-group">
+                    <label for="contactNumber">Contact Number</label>
+                    <h3>{{ packagedata.contactNumber }}</h3>
+                </div>
+                <div class="form-group">
+                    <label for="inclusions">Inclusions</label>
+                    <h3>{{ packagedata.inclusions }}</h3>
+                </div>
+                <div class="form-group">
+                    <label for="minPersons">Mininum Person(s)</label>
+                    <h3>{{ packagedata.minPersons }}</h3>
+                </div>
+                <div class="form-group">
+                    <label for="maxPersons">Maximum Person(s)</label>
+                    <h3>{{ packagedata.maxPersons }}</h3>
+                </div>
+
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="duration">Duration</label>
+                    <h3>{{ packagedata.duration }}</h3>
+                </div>
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <h3>{{ packagedata.description }}</h3>
+                </div>
+                <div class="form-group">
+                    <label for="address">Address</label>
+                    <h3>{{ packagedata.address }}</h3>
+                </div>
+                <div class="form-group">
+                    <label for="imgUrl">Primary Image</label>
+                    <div *ngIf="packagedata.imgUrl">
+                        <img src="{{packagedata.imgUrl}}" width="400" height="300" #url/>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="form-group">
+                    <button class="btn btn-outline-primary" type="submit" (click)="updatePackageDetail()">Edit</button>
+                    <button class="btn btn-outline-info" type="button" (click)="backTolist(); modeView == 'packagelist'">Back to List</button>
+                </div>
+            </div>
+        </div>
+        <form [formGroup]="packageForm" (ngSubmit)="updatePackage(packageForm.value)" *ngIf="modeView == 'updatepackage'" autocomplete="off"
+            novalidate>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.name.touched && packageForm.controls.name.invalid }">
+                        <label for="name">Name of Place</label>
+                        <em *ngIf="packageForm.controls.name.touched && packageForm.controls.name.invalid &&
+                                                        packageForm.controls.name.errors.required">Required</em>
+                        <input type="text" name="name" formControlName="name" placeholder="Name here..." class="form-control" id="name" required>
+                    </div>
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.contactNumber.touched && packageForm.controls.contactNumber.invalid }">
+                        <label for="contactNumber">Contact Number</label>
+                        <em *ngIf="packageForm.controls.contactNumber.touched && packageForm.controls.contactNumber.invalid &&
+                                                        packageForm.controls.contactNumber.errors.required">Required</em>
+                        <input type="text" name="contactNumber" formControlName="contactNumber" placeholder="Contact number here..." class="form-control"
+                            id="contactNumber" required>
+                    </div>
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.inclusions.touched && packageForm.controls.inclusions.invalid }">
+                        <label for="inclusions">Inclusions</label>
+                        <em *ngIf="packageForm.controls.inclusions.touched && packageForm.controls.inclusions.invalid &&
+                                                        packageForm.controls.inclusions.errors.required">Required</em>
+                        <input type="text" name="inclusions" formControlName="inclusions" placeholder="Inclusions here..." class="form-control" id="inclusions"
+                            required>
+                    </div>
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.minPersons.touched && packageForm.controls.minPersons.invalid }">
+                        <label for="minPersons">Mininum Person(s)</label>
+                        <em *ngIf="packageForm.controls.minPersons.touched && packageForm.controls.minPersons.invalid &&
+                                                        packageForm.controls.minPersons.errors.required">Required</em>
+                        <input type="number" min="1" name="minPersons" formControlName="minPersons" class="form-control" id="minPersons" required>
+                    </div>
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.maxPersons.touched && packageForm.controls.maxPersons.invalid }">
+                        <label for="maxPersons">Maximum Person(s)</label>
+                        <em *ngIf="packageForm.controls.maxPersons.touched && packageForm.controls.maxPersons.invalid &&
+                                                        packageForm.controls.maxPersons.errors.required">Required</em>
+                        <input type="number" min="1" name="maxPersons" formControlName="maxPersons" class="form-control" id="maxPersons" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.duration.touched && packageForm.controls.duration.invalid }">
+                        <label for="duration">Duration</label>
+                        <em *ngIf="packageForm.controls.duration.touched && packageForm.controls.duration.invalid &&
+                                                        packageForm.controls.duration.errors.required">Required</em>
+                        <input type="text" name="duration" formControlName="duration" placeholder="Duration here..." class="form-control" id="duration"
+                            required>
+                    </div>
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.description.touched && packageForm.controls.description.invalid }">
+                        <label for="description">Description</label>
+                        <em *ngIf="packageForm.controls.description.touched && packageForm.controls.description.invalid &&
+                                                        packageForm.controls.description.errors.required">Required</em>
+                        <input type="text" name="description" formControlName="description" placeholder="Description here..." class="form-control"
+                            id="description" required>
+                    </div>
+                    <div class="form-group" [ngClass]="{'error': packageForm.controls.address.touched && packageForm.controls.address.invalid }">
+                        <label for="address">Address</label>
+                        <em *ngIf="packageForm.controls.address.touched && packageForm.controls.address.invalid &&
+                                                        packageForm.controls.address.errors.required">Required</em>
+                        <input type="text" name="address" formControlName="address" placeholder="Address here..." class="form-control" id="address"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label for="imgUrl">Primary Image</label>
+                        <br>
+                        <input type="file" (change)="changePrimaryImage($event)" accept=".png,.jpg" #fileInput/>
+                        <br>
+                        <br>
+                        <div class="progress">
+                            <div class="progress-bar progress-bar-animated progress-bar-info" [ngStyle]="{ 'width': currentUpload + '%' }"></div>
+                        </div>
+                        <br>
+                        <div *ngIf="imgUrl">
+                            <img [src]="imgUrl" width="400" height="300"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <button class="btn btn-outline-primary" type="submit">Update</button>
+                        <button class="btn btn-outline-warning" (click)="resetForm(packageForm)">Reset</button>
+                        <button class="btn btn-outline-info" type="button" (click)="modeView = 'listview'">Back to List</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
