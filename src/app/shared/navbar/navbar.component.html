@@ -2,7 +2,8 @@
     <div class="container">
         <div class="navbar-translate">
             <a class="navbar-brand" href="#">The Traveler</a>
-            <button class="navbar-toggler navbar-burger" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation" (click)="sidebarToggle()">
+            <button class="navbar-toggler navbar-burger" type="button" data-toggle="collapse" data-target="#navbarToggler" aria-controls="navbarTogglerDemo02"
+                aria-expanded="false" aria-label="Toggle navigation" (click)="sidebarToggle()">
                 <span class="navbar-toggler-bar"></span>
                 <span class="navbar-toggler-bar"></span>
                 <span class="navbar-toggler-bar"></span>
@@ -10,13 +11,18 @@
         </div>
         <div class="collapse navbar-collapse" id="navbarToggler">
             <ul class="navbar-nav ml-auto">
-                
+
                 <li class="nav-item" *ngIf="!isDocumentation()">
                     <a [routerLink]="['/home']" class="nav-link"><i class="nc-icon nc-book-bookmark"></i>Home</a>
                 </li>
                 <li class="nav-item" *ngIf="!isDocumentation()">
-                    <a [routerLink]="['/createpackage']" class="nav-link" ><i class="nc-icon nc-book-bookmark"></i>Create Package</a>
+                    <a [routerLink]="['/createpackage']" class="nav-link"><i class="nc-icon nc-book-bookmark"></i>Create Package</a>
                 </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li *ngIf="user">Welcome {{ user.displayName }}</li>
+                <li *ngIf="!user"><a href="javascript:void(0)" (click)="authService.signInWithGoogle()">Login</a></li>
+                <li *ngIf="user"><a href="javascript:void(0)" (click)="authService.logout()">Logout</a></li>
             </ul>
         </div>
     </div>

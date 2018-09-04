@@ -1,4 +1,4 @@
-import { AuthGuard } from './core/auth.guard';
+
 import { OwlModule } from 'ngx-owl-carousel';
 import { HttpClientModule } from '@angular/common/http';
 import { PackagesComponent } from './packages/packages.component';
@@ -36,12 +36,15 @@ import { PackageService } from './packages/shared/package.service';
 import { AngularFireDatabaseModule } from 'angularfire2/database';
 import { PackageListComponent } from "./packages/package-list/package-list.component";
 import { SliderComponent } from './slider/slider.component';
-import { CoreModule } from './core/core.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { CarouselModule } from 'ngx-bootstrap/carousel';
 import { PhoneLoginComponent } from './phone-login/phone-login.component';
 import * as firebase from 'firebase';
-import { UserProfileComponent } from './user-profile/user-profile.component';
+import { WindowService } from "./shared/window.service";
+import { UserLoginComponent } from './users/user-login/user-login.component';
+import { UserProfileComponent } from './users/user-profile/user-profile.component';
+import { LoginComponent } from './login/login.component';
+import { AuthService } from "./core/auth.service";
 
 firebase.initializeApp(environment.firebaseConfig);
 
@@ -59,7 +62,9 @@ firebase.initializeApp(environment.firebaseConfig);
     PackageListComponent,
     SliderComponent,
     PhoneLoginComponent,
-    UserProfileComponent
+    UserLoginComponent,
+    UserProfileComponent,
+    LoginComponent
 
   ],
   imports: [
@@ -74,10 +79,9 @@ firebase.initializeApp(environment.firebaseConfig);
     ReactiveFormsModule,
     HttpClientModule,
     CarouselModule.forRoot(),
-    ModalModule.forRoot(),
-    CoreModule
+    ModalModule.forRoot()
   ],
-  providers: [PackageService, AuthGuard],
+  providers: [PackageService, WindowService, AuthService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
