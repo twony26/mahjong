@@ -1,5 +1,5 @@
 <div class="form-group">
-    <button type="buton" class="btn btn-block" (click)="signInWithFacebook()">
+  <!-- <button type="buton" class="btn btn-block" (click)="signInWithFacebook()">
       <i class="fa fa-facebook" aria-hidden="true"></i> 
       Login with Facebook
     </button>
@@ -7,8 +7,14 @@
       <i class="fa fa-twitter" aria-hidden="true"></i>
       Login with Twitter
     </button>
-<button type="button" class="btn btn-block" (click)="signInWithGoogle()">
+<button type="button" class="btn btn-block" (click)="signInWithGithub()">
+      <i class="fa fa-github" aria-hidden="true"></i>
+      Login with Github
+    </button>-->
+  <div class="text-center" style="margin-top: 50px;"><button type="button" class="btn btn-primary" (click)="tryGoogleLogin()">
       <i class="fa fa-google" aria-hidden="true"></i>
-      Login with Google
-    </button>
-</div>     
+      Login with GMAIL
+    </button></div>
+    <em *ngIf="loginError" class="text-center">Sorry this is for itended users only</em>
+
+</div>

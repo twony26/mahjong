@@ -46,6 +46,7 @@ import { UserLoginComponent } from './users/user-login/user-login.component';
 import { UserProfileComponent } from './users/user-profile/user-profile.component';
 import { LoginComponent } from './login/login.component';
 import { AuthService } from "./core/auth.service";
+import { AuthGuard } from "./core/auth.guard";
 
 firebase.initializeApp(environment.firebaseConfig);
 
@@ -82,7 +83,7 @@ firebase.initializeApp(environment.firebaseConfig);
     CarouselModule.forRoot(),
     ModalModule.forRoot()
   ],
-  providers: [PackageService, WindowService, AuthService, FBService],
+  providers: [PackageService, WindowService, AuthService, FBService, AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -24,10 +24,7 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "../node_modules/bootstrap/dist/css/bootstrap.min.css",
-        "assets/sass/paper-kit.scss",
-        "assets/css/demo.css",
-        "assets/css/nucleo-icons.css"
+        "../node_modules/bootstrap/dist/css/bootstrap.min.css"
       ],
       "scripts": [
         "../node_modules/jquery/dist/jquery.slim.min.js",

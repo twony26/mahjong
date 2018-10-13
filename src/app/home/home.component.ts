@@ -117,7 +117,7 @@ export class HomeComponent implements OnInit {
                 id: k.id,
                 x: k.x / w_width,
                 y: k.y / w_height,
-                isFront: false,
+                isFront: true,
                 group: k.group,
                 player: k.player
             })
@@ -199,76 +199,88 @@ export class HomeComponent implements OnInit {
             return k;
         })
 
+        firebase.database().ref('user').once('value').then(function (f) {
+            let u = Array.from(Object.keys(f.val()), k => f.val()[k]);
+            let cntOnline = 0;
+            u.forEach(function (e) {
+                if (e.status === 'online') {
+                    cntOnline++;
+                }
+            })
 
-        firebase.database().ref('config/game_status').once('value').then(function (s) {
-            let game_status = s.val();
+            console.log(cntOnline);
 
-            if (game_status === 'ended') {
-                ref_card.on("value", function (snapshot) {
-                    let obj = snapshot.val();
-                    let jsonRect: Card[] = [];
-                    jsonRect1.forEach(e => {
-                        let _h = obj[e.id];
-                        _h.x = _h.x * w_width;
-                        _h.y = _h.y * w_height;
-                        _h.player = e.player;
-                        jsonRect.push(_h);
+            firebase.database().ref('config/game_status').once('value').then(function (s) {
+                let game_status = s.val();
+
+                if (game_status === 'ended') {
+                    ref_card.on("value", function (snapshot) {
+                        let obj = snapshot.val();
+                        let jsonRect: Card[] = [];
+                        jsonRect1.forEach(e => {
+                            let _h = obj[e.id];
+                            _h.x = _h.x * w_width;
+                            _h.y = _h.y * w_height;
+                            _h.player = e.player;
+                            jsonRect.push(_h);
+                        });
+
+                        jsonRect2.forEach(e => {
+                            let _h = obj[e.id];
+                            _h.x = _h.x * w_width;
+                            _h.y = _h.y * w_height;
+                            _h.player = e.player;
+                            jsonRect.push(_h);
+                        });
+
+                        jsonRect3.forEach(e => {
+                            let _h = obj[e.id];
+                            _h.x = _h.x * w_width;
+                            _h.y = _h.y * w_height;
+                            _h.player = e.player;
+                            jsonRect.push(_h);
+                        });
+
+                        jsonRect4.forEach(e => {
+                            let _h = obj[e.id];
+                            _h.x = _h.x * w_width;
+                            _h.y = _h.y * w_height;
+                            _h.player = e.player;
+                            jsonRect.push(_h);
+                        });
+
+                        let _cardGame = new CardGame();
+                        _cardGame.loadCard(w_height, w_width, jsonRect, x_common, h_card, startTime, endTime, 1, ref_card);
+
+                    }, function (errorObject) {
+                        console.log("The read failed: " + errorObject.code);
                     });
+                } else if (game_status === 'loaded') {
+                    ref_card.on("value", function (snapshot) {
+                        let obj: Card[] = snapshot.val();
+                        let jsonRect = Array.from(Object.keys(obj), k => obj[k]);
+                        jsonRect.map(function (r) {
+                            r.x = r.x * w_width;
+                            r.y = r.y * w_height;
+                            return r;
+                        });
 
-                    jsonRect2.forEach(e => {
-                        let _h = obj[e.id];
-                        _h.x = _h.x * w_width;
-                        _h.y = _h.y * w_height;
-                        _h.player = e.player;
-                        jsonRect.push(_h);
+                        let _cardGame = new CardGame();
+                        _cardGame.loadCard(w_height, w_width, jsonRect, x_common, h_card, startTime, endTime, cntOnline, ref_card);
+
+
+                    }, function (errorObject) {
+                        console.log("The read failed: " + errorObject.code);
                     });
-
-                    jsonRect3.forEach(e => {
-                        let _h = obj[e.id];
-                        _h.x = _h.x * w_width;
-                        _h.y = _h.y * w_height;
-                        _h.player = e.player;
-                        jsonRect.push(_h);
-                    });
-
-                    jsonRect4.forEach(e => {
-                        let _h = obj[e.id];
-                        _h.x = _h.x * w_width;
-                        _h.y = _h.y * w_height;
-                        _h.player = e.player;
-                        jsonRect.push(_h);
-                    });
-
-                    let _cardGame = new CardGame();
-                    _cardGame.loadCard(w_height, w_width, jsonRect, x_common, h_card, startTime, endTime, current_player, ref_card);
-
-                }, function (errorObject) {
-                    console.log("The read failed: " + errorObject.code);
-                });
-            } else if (game_status === 'loaded') {
-                ref_card.on("value", function (snapshot) {
-                    let obj: Card[] = snapshot.val();
-                    let jsonRect = Array.from(Object.keys(obj), k=>obj[k]);
-                    jsonRect.map(function(r){
-                        r.x = r.x * w_width;
-                        r.y = r.y * w_height;
-                        return r;
-                    });
-
-                    let _cardGame = new CardGame();
-                    _cardGame.loadCard(w_height, w_width, jsonRect, x_common, h_card, startTime, endTime, current_player, ref_card);
-
-
-                }, function (errorObject) {
-                    console.log("The read failed: " + errorObject.code);
-                });
-            }
+                }
+            });
         });
+
 
 
     }
 
-    getPlayer(){
+    getPlayer() {
         this._currentPlayer++;
     }
 }
@@ -286,7 +298,91 @@ export class CardGame {
             .append("g")
             .attr('id', function (d) {
                 return 'id-' + d.id;
-            });
+            })
+            .on('touchstart', function (d) {
+
+                startTime = new Date();
+                if (current_player === d.player) {
+                    if ((startTime - endTime) <= 300) {
+                        d3.select(this).style("fill", "white");
+                        let x_per = d.x / w_width;
+                        let y_per = d.y / w_height;
+                        ref.child(d.id).set({
+                            id: d.id,
+                            isFront: !d.isFront,
+                            x: x_per,
+                            y: y_per,
+                            group: d.group,
+                            player: d.player
+                        })
+                    }
+                }
+                endTime = startTime;
+            })
+            .on('mousedown', function (d) {
+                startTime = new Date();
+                if (current_player === d.player) {
+                    if ((startTime - endTime) <= 300) {
+                        d3.select(this).style("fill", "white");
+                        let x_per = d.x / w_width;
+                        let y_per = d.y / w_height;
+                        ref.child(d.id).set({
+                            id: d.id,
+                            isFront: !d.isFront,
+                            x: x_per,
+                            y: y_per,
+                            group: d.group,
+                            player: d.player
+                        })
+                    }
+                }
+                endTime = startTime;
+
+            })
+            .call(d3.drag()
+                .on("start", function dragstarted(d) {
+                    d3.select(this).raise().classed("active", true);
+                    let x_per = d3.event.x / w_width;
+                    let y_per = d3.event.y / w_height;
+                    let _x = x_per * d3.event.x;
+                    let _y = y_per * d3.event.y;
+
+                    // console.log('start' + d3.event.x + '=>' + d3.event.y);
+                    // console.log(jsonRect);
+
+                })
+                .on("drag", function dragged(d) {
+                    let x_per = d3.event.x / w_width;
+                    let y_per = d3.event.y / w_height;
+                    if (current_player === d.player) {
+                        d3.select(this).attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
+                        let _id = this.id.substring(3)
+                        let _id_rect = 'rect#idrect-' + _id;
+                        let _id_img = 'image#idImg-' + _id;
+                        d3.select(_id_rect).attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
+                        d3.select(_id_img).attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
+
+                    }
+                    //console.log('dragging' + d3.event.x + '=>' + d3.event.y);
+                })
+                .on("end", function dragended(d) {
+                    d3.select(this).classed("active", false);
+                    let x_per = d3.event.x / w_width;
+                    let y_per = d3.event.y / w_height;
+                    // console.log('stop_per' + x_per + '=>' + y_per);
+                    // console.log('stop_act' + d3.event.x + '=>' + d3.event.y);
+                    if (current_player === d.player) {
+                        ref.child(d.id).set({
+                            id: d.id,
+                            isFront: d.isFront,
+                            x: x_per,
+                            y: y_per,
+                            group: d.group,
+                            player: d.player
+                        })
+                    }
+
+                }))
 
         let rects = g_group
             .append("rect");
@@ -323,87 +419,43 @@ export class CardGame {
             .attr("stroke", 'black')
             .style("fill", function (d) {
                 if (d.isFront) {
-                    return 'blue';
+                    return 'white';
                 }
                 return 'red';
-            })
-            .on('touchstart', function (d) {
+            });
 
-                startTime = new Date();
-                if (current_player === d.player) {
-                    if ((startTime - endTime) <= 300) {
-                        d3.select(this).style("fill", "blue");
-                        let x_per = d.x / w_width;
-                        let y_per = d.y / w_height;
-                        ref.child(d.id).set({
-                            id: d.id,
-                            isFront: !d.isFront,
-                            x: x_per,
-                            y: y_per,
-                            group: d.group,
-                            player: d.player
-                        })
-                    }
+        let img = g_group.append('image')
+            .attr('id', function (d) {
+                return 'idImg-' + d.id;
+            })
+            .attr('xlink:href', 'assets/img/cards/ball_4.png')
+            .attr('visibility', function (d) {
+                if (d.isFront) {
+                    return 'visible';
                 }
-                endTime = startTime;
+                return 'hidden';
             })
-            .on('mousedown', function (d) {
-                startTime = new Date();
-                if (current_player === d.player) {
-                    if ((startTime - endTime) <= 300) {
-                        d3.select(this).style("fill", "blue");
-                        let x_per = d.x / w_width;
-                        let y_per = d.y / w_height;
-                        ref.child(d.id).set({
-                            id: d.id,
-                            isFront: !d.isFront,
-                            x: x_per,
-                            y: y_per,
-                            group: d.group,
-                            player: d.player
-                        })
-                    }
+            .attr('height', function (d) {
+                if (d.player % 2 === 0) {
+                    return x_common;
                 }
-                endTime = startTime;
-
+                else {
+                    return h_card;
+                }
             })
-            .call(d3.drag()
-                .on("start", function dragstarted(d) {
-                    d3.select(this).raise().classed("active", true);
-                    let x_per = d3.event.x / w_width;
-                    let y_per = d3.event.y / w_height;
-                    let _x = x_per * d3.event.x;
-                    let _y = y_per * d3.event.y;
-
-                    // console.log('start' + d3.event.x + '=>' + d3.event.y);
-                    // console.log(jsonRect);
-
-                })
-                .on("drag", function dragged(d) {
-                    let x_per = d3.event.x / w_width;
-                    let y_per = d3.event.y / w_height;
-                    if (current_player === d.player) {
-                        d3.select(this).attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
-                    }
-                    //console.log('dragging' + d3.event.x + '=>' + d3.event.y);
-                })
-                .on("end", function dragended(d) {
-                    d3.select(this).classed("active", false);
-                    let x_per = d3.event.x / w_width;
-                    let y_per = d3.event.y / w_height;
-                    // console.log('stop_per' + x_per + '=>' + y_per);
-                    // console.log('stop_act' + d3.event.x + '=>' + d3.event.y);
-                    if (current_player === d.player) {
-                        ref.child(d.id).set({
-                            id: d.id,
-                            isFront: d.isFront,
-                            x: x_per,
-                            y: y_per,
-                            group: d.group,
-                            player: d.player
-                        })
-                    }
-
-                }));
+            .attr('width', function (d) {
+                if (d.player % 2 === 0) {
+                    return h_card;
+                }
+                else {
+                    return x_common;
+                }
+            })
+            .attr("x", function (d) {
+                return d.x;
+            })
+            .attr("y", function (d) {
+                return d.y;
+            })
     }
 }
