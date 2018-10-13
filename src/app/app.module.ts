@@ -1,3 +1,4 @@
+import { FBService } from './core/fb.service';
 
 import { OwlModule } from 'ngx-owl-carousel';
 import { HttpClientModule } from '@angular/common/http';
@@ -81,7 +82,7 @@ firebase.initializeApp(environment.firebaseConfig);
     CarouselModule.forRoot(),
     ModalModule.forRoot()
   ],
-  providers: [PackageService, WindowService, AuthService],
+  providers: [PackageService, WindowService, AuthService, FBService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

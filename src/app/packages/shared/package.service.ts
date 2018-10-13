@@ -16,8 +16,16 @@ export class PackageService {
 
     constructor(private fb: AngularFireDatabase, private afs: AngularFirestore) { //
         //  this.packageList = this.fb.list('/packages');
-        this.packageCollection = this.afs.collection('package', x => x.orderBy('name', 'asc'));
-        this.packages = this.packageCollection.valueChanges();
+        // this.packageCollection = this.afs.collection('package', x => x.orderBy('name', 'asc'));
+        // this.packages = this.packageCollection.valueChanges();
+        this.afs.collection('card').snapshotChanges().forEach(function (change) {
+            change.forEach(function (e) {
+                if (e.type === 'modified') {
+                    let attr = e.payload.doc.data();
+                    
+                }
+            })
+        });
     }
 
 
@@ -45,30 +53,41 @@ export class PackageService {
 
 
     insertPackage(_package: Package) {
-        const _p: Package = new Package();
-        _p.address = _package.address;
-        _p.name = _package.name;
-        _p.description = _package.description;
-        _p.maxPersons = _package.maxPersons;
-        _p.minPersons = _package.minPersons;
-        _p.duration = _package.duration;
-        _p.contactNumber = _package.contactNumber;
-        _p.inclusions = _package.inclusions;
-        _p.imgUrl = _package.imgUrl;
-        _p.guid = Guid.create()['value'];
-        _p.gallery = _package.gallery;
-        this.afs.collection('package').doc(_p.guid.toString()).set(JSON.parse(JSON.stringify(_p)));
-        //this.packageCollection.add(JSON.parse(JSON.stringify(_p)));
-        //this.packageList.push(_p);
+        // const _p: Package = new Package();
+        // _p.address = _package.address;
+        // _p.name = _package.name;
+        // _p.description = _package.description;
+        // _p.maxPersons = _package.maxPersons;
+        // _p.minPersons = _package.minPersons;
+        // _p.duration = _package.duration;
+        // _p.contactNumber = _package.contactNumber;
+        // _p.inclusions = _package.inclusions;
+        // _p.imgUrl = _package.imgUrl;
+        // _p.guid = Guid.create()['value'];
+        // _p.gallery = _package.gallery;
+        // this.afs.collection('package').doc(_p.guid.toString()).set(JSON.parse(JSON.stringify(_p)));
+        // //this.packageCollection.add(JSON.parse(JSON.stringify(_p)));
+        // //this.packageList.push(_p);
     }
 
-    // updatePackage(_package: Package) {
-    //     // this.packageList.update(_package.$key, {
-    //     //     description: _package.description,
-    //     // });
-    // }
 
-    // deletePackage($key: string) {
-    //    // this.packageList.remove($key);
-    // }
+    insertcard() {
+        const _p: Card = new Card();
+        _p.x = 100;
+        _p.y = 200;
+        _p.id = "1";
+        _p.group = "katak";
+        _p.guid = Guid.create()['value'];
+        this.afs.collection('card').doc(_p.guid.toString()).set(JSON.parse(JSON.stringify(_p)));
+    }
 }
+
+export class Card {
+    x: number;
+    y: number;
+    id: string;
+    group: string;
+    name: string;
+    guid: Guid;
+}
+

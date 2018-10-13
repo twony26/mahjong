@@ -6,11 +6,11 @@
 export const environment = {
   production: false,
   firebaseConfig: {
-    apiKey: 'AIzaSyCQDPrR4ehH9iUjZCI5AU_HhftX2k3JE_s',
-    authDomain: 'tour-package-283ae.firebaseapp.com',
-    databaseURL: 'https://tour-package-283ae.firebaseio.com',
-    projectId: 'tour-package-283ae',
-    storageBucket: 'tour-package-283ae.appspot.com',
-    messagingSenderId: '935426664440'
+   apiKey: "AIzaSyCGMPI4kn0pWaN2to9i8-OR4HmGysRRB98",
+    authDomain: "porkeros-porkeras.firebaseapp.com",
+    databaseURL: "https://porkeros-porkeras.firebaseio.com",
+    projectId: "porkeros-porkeras",
+    storageBucket: "porkeros-porkeras.appspot.com",
+    messagingSenderId: "1001476931639"
   }
 };
