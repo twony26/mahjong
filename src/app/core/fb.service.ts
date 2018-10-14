@@ -82,5 +82,6 @@ export class Card {
     group: string;
     isFront: boolean;
     player: number;
+    rotation: string;
 }
 

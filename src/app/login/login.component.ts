@@ -40,7 +40,8 @@ export class LoginComponent implements OnInit {
     this.authService.signInWithGoogle()
       .then((res) => {
         console.log(res);
-        if (res.user.email === 'twonytwony@gmail.com' || res.user.email === 'boytwony@gmail@gmail.com') {
+        if (res.user.email === 'twonytwony@gmail.com' || res.user.email === 'boytwony@gmail@gmail.com'
+        || res.user.email === 'jgspaclibar111@gmail.com') {
           this.user = res.user;
           this.router.navigate(['/']);
           this.loginError = false;
@@ -58,7 +59,7 @@ export class LoginComponent implements OnInit {
     this.authService.doGoogleLogin()
       .then(res => {
         if (res.additionalUserInfo.profile.email === 'twonytwony@gmail.com' ||
-          res.additionalUserInfo.profile.email === 'boytwony@gmail.com') {
+          res.additionalUserInfo.profile.email === 'boytwony@gmail.com' || res.user.email === 'jgspaclibar111@gmail.com') {
           this.router.navigate(['/home']);
           this.loginError = false;
         }
