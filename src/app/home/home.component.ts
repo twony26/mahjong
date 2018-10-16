@@ -51,7 +51,6 @@ export class HomeComponent implements OnInit {
             this.card_deck.splice(n_random, 1);
             jsonRect1.push(_c);
         }
-        console.log(jsonRect1);
 
         let jsonRect2: Card[] = [];
         for (let i = 0; i < 16; i++) {
@@ -80,7 +79,17 @@ export class HomeComponent implements OnInit {
             jsonRect4.push(_c);
         }
 
+        let gabot: Card[] = [];
+        for (let i = 0; i < 80; i++) {
+            let n_random = this.getRandomInt(this.card_deck.length);
+            let _c = this.card_deck[n_random];
+            _c.player = 4;
+            this.card_deck.splice(n_random, 1);
+            gabot.push(_c);
+        }
+
         console.log(this.card_deck.length);
+        console.log(gabot);
 
 
         let w_width = 0;
@@ -227,7 +236,30 @@ export class HomeComponent implements OnInit {
                                     player: k.player,
                                     rotation: '90,' + (x_origin / w_width) + ',' + (y_origin / w_height)
                                 })
+                                return k;
+                            })
 
+                            let gabot_x = h_card;
+                            let gabot_y = h_card;
+                            let counter = 0;
+                            gabot.map(function (k) {
+                                k.x = (gabot_x * 2) + 10;
+                                k.y = (gabot_y * 2) + 2 + counter;
+
+                                let x_origin = k.x + (x_common / 2);
+                                let y_origin = k.y + (h_card / 2);
+                                k.rotation = '90,' + x_origin + ',' + y_origin;
+                                counter = counter + x_common;
+
+                                ref_card.child(k.id).set({
+                                    id: k.id,
+                                    x: k.x / w_width,
+                                    y: k.y / w_height,
+                                    isFront: true,
+                                    group: k.group,
+                                    player: k.player,
+                                    rotation: '90,' + (x_origin / w_width) + ',' + (y_origin / w_height)
+                                })
                                 return k;
                             })
 
@@ -270,11 +302,20 @@ export class HomeComponent implements OnInit {
                                     jsonRect.push(_h);
                                 });
 
+                                gabot.forEach(function (e) {
+                                    let _h = obj[e.id];
+                                    _h.x = _h.x * w_width;
+                                    _h.y = _h.y * w_height;
+                                    _h.player = e.player;
+                                    _h.rotation = e.rotation;
+                                    jsonRect.push(_h);
+                                });
+
                                 let _cardGame = new CardGame();
                                 _cardGame.loadCard(w_height, w_width, jsonRect, x_common, h_card, startTime, endTime, 1, ref_card);
-                                firebase.database().ref('config').update({
-                                    game_status: 'loaded'
-                                })
+                                // firebase.database().ref('config').update({
+                                //     game_status: 'loaded'
+                                // })
 
                             }, function (errorObject) {
                                 console.log("The read failed: " + errorObject.code);
@@ -296,7 +337,7 @@ export class HomeComponent implements OnInit {
                         });
 
                         let _cardGame = new CardGame();
-                        _cardGame.loadCard(w_height, w_width, jsonRect, x_common, h_card, startTime, endTime, cntOnline, ref_card);
+                        _cardGame.loadCard(w_height, w_width, jsonRect, x_common, h_card, startTime, endTime, 1, ref_card);
 
 
                     }, function (errorObject) {
@@ -338,6 +379,9 @@ export class CardGame {
                         let x_per = d.x / w_width;
                         let y_per = d.y / w_height;
                         let _r = d.rotation.split(',');
+                        let x_origin = d.x + (x_common / 2);
+                        let y_origin = d.y + (h_card / 2);
+                        let new_rotation = _r[0] + ',' + (x_origin / w_width) + ',' + (y_origin / w_height)
                         ref.child(d.id).set({
                             id: d.id,
                             isFront: !d.isFront,
@@ -345,7 +389,7 @@ export class CardGame {
                             y: y_per,
                             group: d.group,
                             player: d.player,
-                            rotation: _r[0] + ',' + _r[1] + ',' + _r[1]
+                            rotation: new_rotation
                         })
                     }
                 }
@@ -359,6 +403,9 @@ export class CardGame {
                         let x_per = d.x / w_width;
                         let y_per = d.y / w_height;
                         let _r = d.rotation.split(',');
+                        let x_origin = d.x + (x_common / 2);
+                        let y_origin = d.y + (h_card / 2);
+                        let new_rotation = _r[0] + ',' + (x_origin / w_width) + ',' + (y_origin / w_height)
                         ref.child(d.id).set({
                             id: d.id,
                             isFront: !d.isFront,
@@ -366,7 +413,7 @@ export class CardGame {
                             y: y_per,
                             group: d.group,
                             player: d.player,
-                            rotation: _r[0] + ',' + _r[1] + ',' + _r[1]
+                            rotation: new_rotation
                         })
                     }
                 }
@@ -389,12 +436,25 @@ export class CardGame {
                     let x_per = d3.event.x / w_width;
                     let y_per = d3.event.y / w_height;
                     if (current_player === d.player) {
+
+                        if ((d3.event.x < 0 || d3.event.x > (w_width - h_card)) || (d3.event.y < 0 || d3.event.y > (w_height - h_card))) {
+                            return;
+                        }
+
                         d3.select(this).attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
+                        // update rotation values of x and y
+                        let _r = d.rotation.split(',');
+                        let x_origin = d3.event.x + (x_common / 2);
+                        let y_origin = d3.event.y + (h_card / 2);
+                        let new_rotation = _r[0] + ',' + x_origin + ',' + y_origin;
+
                         let _id = this.id.substring(3)
                         let _id_rect = 'rect#idrect-' + _id;
                         let _id_img = 'image#idImg-' + _id;
-                        d3.select(_id_rect).attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
-                        d3.select(_id_img).attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y);
+                        d3.select(_id_rect).attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y).attr('transform', 'rotate(' + new_rotation + ')');
+                        d3.select(_id_img).attr("x", d.x = d3.event.x).attr("y", d.y = d3.event.y).attr('transform', 'rotate(' + new_rotation + ')');
+
+
 
                     }
                     //console.log('dragging' + d3.event.x + '=>' + d3.event.y);
@@ -404,9 +464,9 @@ export class CardGame {
                     let x_per = d3.event.x / w_width;
                     let y_per = d3.event.y / w_height;
                     let _r = d.rotation.split(',');
-                    // console.log('stop_per' + x_per + '=>' + y_per);
-                    // console.log('stop_act' + d3.event.x + '=>' + d3.event.y);
-
+                    let x_origin = d3.event.x + (x_common / 2);
+                    let y_origin = d3.event.y + (h_card / 2);
+                    let new_rotation = _r[0] + ',' + (x_origin / w_width) + ',' + (y_origin / w_height)
                     if (current_player === d.player) {
                         ref.child(d.id).set({
                             id: d.id,
@@ -415,7 +475,7 @@ export class CardGame {
                             y: y_per,
                             group: d.group,
                             player: d.player,
-                            rotation: _r[0] + ',' + _r[1] + ',' + _r[1]
+                            rotation: new_rotation
                         })
                     }
 
