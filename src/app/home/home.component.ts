@@ -241,15 +241,48 @@ export class HomeComponent implements OnInit {
 
                             let gabot_x = h_card;
                             let gabot_y = h_card;
-                            let counter = 0;
+                            let counter_one = 0;
+                            let counter_two = 0;
+                            let counter_three = 0;
+                            let counterAll = 0;
                             gabot.map(function (k) {
-                                k.x = (gabot_x * 2) + 10;
-                                k.y = (gabot_y * 2) + 2 + counter;
+                                let x_origin = 0;
+                                let y_origin = 0;
+                                let r_deg = '0';
 
-                                let x_origin = k.x + (x_common / 2);
-                                let y_origin = k.y + (h_card / 2);
-                                k.rotation = '90,' + x_origin + ',' + y_origin;
-                                counter = counter + x_common;
+                                if ((counterAll < 13) || (counterAll >= 40 && counterAll < 53)) { //
+                                    k.x = (gabot_x * 2) + 10;
+                                    k.y = ((gabot_y * 3) + 8 + counter_one);
+                                    x_origin = k.x + (x_common / 2);
+                                    y_origin = k.y + (h_card / 2);
+                                    k.rotation = '90,' + x_origin + ',' + y_origin;
+                                    counter_one = counter_one + x_common;
+                                    r_deg = '90';
+                                }
+                                else if ((counterAll >= 13 && counterAll <= 26) || (counterAll >= 53 && counterAll <= 66)) { // 
+                                    k.x = ((gabot_y * 2) + counter_two) + 4;
+                                    k.y = (gabot_x * 2) + 10;
+                                    x_origin = k.x + (h_card / 2);
+                                    y_origin = k.y + (x_common / 2);
+                                    k.rotation = '0,' + x_origin + ',' + y_origin;
+                                    counter_two = counter_two + x_common;
+                                }
+                                else if ((counterAll >= 27 && counterAll <= 39) || (counterAll >= 67 && counterAll <= 79)) { // 
+                                    k.x = (gabot_x * 2) + 595;
+                                    k.y = ((gabot_y * 3) + 8 + counter_three);
+                                    x_origin = k.x + (x_common / 2);
+                                    y_origin = k.y + (h_card / 2);
+                                    k.rotation = '90,' + x_origin + ',' + y_origin;
+                                    counter_three = counter_three + x_common;
+                                    r_deg = '90';
+                                }
+                                if (counterAll === 39) {
+                                    counter_one = 0;
+                                    counter_two = 0;
+                                    counter_three = 0;
+                                }
+
+                                k.player = 1;
 
                                 ref_card.child(k.id).set({
                                     id: k.id,
@@ -258,8 +291,9 @@ export class HomeComponent implements OnInit {
                                     isFront: true,
                                     group: k.group,
                                     player: k.player,
-                                    rotation: '90,' + (x_origin / w_width) + ',' + (y_origin / w_height)
+                                    rotation: r_deg + ',' + (x_origin / w_width) + ',' + (y_origin / w_height)
                                 })
+                                counterAll++;
                                 return k;
                             })
 
@@ -307,7 +341,8 @@ export class HomeComponent implements OnInit {
                                     _h.x = _h.x * w_width;
                                     _h.y = _h.y * w_height;
                                     _h.player = e.player;
-                                    _h.rotation = e.rotation;
+                                    let _r = _h.rotation.split(',');
+                                    _h.rotation = _r[0] + ',' + (_r[1] * w_width) + ',' + (_r[2] * w_height);
                                     jsonRect.push(_h);
                                 });
 
@@ -392,6 +427,9 @@ export class CardGame {
                             rotation: new_rotation
                         })
                     }
+                    if (((startTime - endTime) > 300) && ((startTime - endTime) <= 1000)) {
+                        d3.select(this).style("fill", "red");
+                    }
                 }
                 endTime = startTime;
             })
@@ -415,6 +453,9 @@ export class CardGame {
                             player: d.player,
                             rotation: new_rotation
                         })
+                    }
+                    if (((startTime - endTime) > 300) && ((startTime - endTime) <= 1000)) {
+                        d3.select(this).style("fill", "red");
                     }
                 }
                 endTime = startTime;
