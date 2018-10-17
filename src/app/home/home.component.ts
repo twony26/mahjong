@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 import { AngularFirestore } from "angularfire2/firestore";
 import * as d3 from 'd3';
 import * as firebase from 'firebase';
+import { Functions } from "../core/functions";
 
 @Component({
     selector: 'app-home',
@@ -24,11 +25,12 @@ export class HomeComponent implements OnInit {
 
     card_deck: Card[];
     _currentPlayer: number;
+    fn: Functions;
 
     packageList: Observable<any>;
     constructor(private svc: FBService, private afs: AngularFirestore) {
         this._currentPlayer = 1;
-
+        this.fn = new Functions();
     }
 
     getRandomInt(max) {
@@ -282,7 +284,7 @@ export class HomeComponent implements OnInit {
                                     counter_three = 0;
                                 }
 
-                                k.player = 1;
+                                k.player = 0;
 
                                 ref_card.child(k.id).set({
                                     id: k.id,
@@ -389,6 +391,34 @@ export class HomeComponent implements OnInit {
     getPlayer() {
         this._currentPlayer++;
     }
+
+
+    sortCards() {
+        let p = d3.selectAll('[player="' + this._currentPlayer + '"]')._groups[0];
+        let _c: Card[] = [];
+        for (let i = 0; i < p.length; i++) {
+            let _p = p[i].__data__;
+            _c.push(_p);
+        }
+        console.log(p);
+        let sorted_cards = this.fn.sortCards(_c);
+        sorted_cards.forEach(function (e) {
+            let _idRect = 'rect#idrect-' + e.id;
+            let _idImg = 'image#idImg-' + e.id;
+            d3.select(_idRect).attr('x', e.x);
+            d3.select(_idImg).attr('x', e.x);
+
+            // ref_card.child(e.id).set({
+            //     id: k.id,
+            //     x: k.x / w_width,
+            //     y: k.y / w_height,
+            //     isFront: true,
+            //     group: k.group,
+            //     player: k.player,
+            //     rotation: '90,' + (x_origin / w_width) + ',' + (y_origin / w_height)
+            // })
+        })
+    }
 }
 
 export class CardGame {
@@ -402,6 +432,9 @@ export class CardGame {
             .data(jsonRect)
             .enter()
             .append("g")
+            .attr('class', function (d) {
+                return 'player-' + d.player;
+            })
             .attr('id', function (d) {
                 return 'id-' + d.id;
             })
@@ -583,4 +616,5 @@ export class CardGame {
                 return d.y;
             })
     }
+
 }
