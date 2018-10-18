@@ -23,14 +23,18 @@ export class HomeComponent implements OnInit {
         right: false
     };
 
-    card_deck: Card[];
+    _card_deck: Card[];
     _currentPlayer: number;
-    fn: Functions;
+    _fn: Functions;
+    _width: number;
+    _height: number;
+    _x_common: number;
+    _h_card: number;
 
     packageList: Observable<any>;
     constructor(private svc: FBService, private afs: AngularFirestore) {
         this._currentPlayer = 1;
-        this.fn = new Functions();
+        this._fn = new Functions();
     }
 
     getRandomInt(max) {
@@ -39,7 +43,7 @@ export class HomeComponent implements OnInit {
 
 
     ngOnInit() {
-        this.card_deck = deck;
+        this._card_deck = deck;
         let ref_card = firebase.database().ref("card");
         let startTime: any;
         let endTime = 0;
@@ -47,50 +51,50 @@ export class HomeComponent implements OnInit {
 
         let jsonRect1: Card[] = [];
         for (let i = 0; i < 16; i++) {
-            let n_random = this.getRandomInt(this.card_deck.length);
-            let _c = this.card_deck[n_random];
+            let n_random = this.getRandomInt(this._card_deck.length);
+            let _c = this._card_deck[n_random];
             _c.player = 1;
-            this.card_deck.splice(n_random, 1);
+            this._card_deck.splice(n_random, 1);
             jsonRect1.push(_c);
         }
 
         let jsonRect2: Card[] = [];
         for (let i = 0; i < 16; i++) {
-            let n_random = this.getRandomInt(this.card_deck.length);
-            let _c = this.card_deck[n_random];
+            let n_random = this.getRandomInt(this._card_deck.length);
+            let _c = this._card_deck[n_random];
             _c.player = 2;
-            this.card_deck.splice(n_random, 1);
+            this._card_deck.splice(n_random, 1);
             jsonRect2.push(_c);
         }
 
         let jsonRect3: Card[] = [];
         for (let i = 0; i < 16; i++) {
-            let n_random = this.getRandomInt(this.card_deck.length);
-            let _c = this.card_deck[n_random];
+            let n_random = this.getRandomInt(this._card_deck.length);
+            let _c = this._card_deck[n_random];
             _c.player = 3;
-            this.card_deck.splice(n_random, 1);
+            this._card_deck.splice(n_random, 1);
             jsonRect3.push(_c);
         }
 
         let jsonRect4: Card[] = [];
         for (let i = 0; i < 16; i++) {
-            let n_random = this.getRandomInt(this.card_deck.length);
-            let _c = this.card_deck[n_random];
+            let n_random = this.getRandomInt(this._card_deck.length);
+            let _c = this._card_deck[n_random];
             _c.player = 4;
-            this.card_deck.splice(n_random, 1);
+            this._card_deck.splice(n_random, 1);
             jsonRect4.push(_c);
         }
 
         let gabot: Card[] = [];
         for (let i = 0; i < 80; i++) {
-            let n_random = this.getRandomInt(this.card_deck.length);
-            let _c = this.card_deck[n_random];
+            let n_random = this.getRandomInt(this._card_deck.length);
+            let _c = this._card_deck[n_random];
             _c.player = 4;
-            this.card_deck.splice(n_random, 1);
+            this._card_deck.splice(n_random, 1);
             gabot.push(_c);
         }
 
-        console.log(this.card_deck.length);
+        console.log(this._card_deck.length);
         console.log(gabot);
 
 
@@ -105,6 +109,9 @@ export class HomeComponent implements OnInit {
             w_height = window.screen.height;
         }
 
+        this._width = w_width;
+        this._height = w_height;
+
 
         let w_space = w_width * 0.15;
         let w_card_space = w_width * 0.85;
@@ -116,7 +123,8 @@ export class HomeComponent implements OnInit {
         let num = 0;
         let h_card = w_height / 16;
 
-
+        this._x_common = x_common;
+        this._h_card = h_card;
 
         firebase.database().ref('user').once('value').then(function (f) {
             let u = Array.from(Object.keys(f.val()), k => f.val()[k]);
@@ -253,8 +261,8 @@ export class HomeComponent implements OnInit {
                                 let r_deg = '0';
 
                                 if ((counterAll < 13) || (counterAll >= 40 && counterAll < 53)) { //
-                                    k.x = (gabot_x * 2) + 10;
-                                    k.y = ((gabot_y * 3) + 8 + counter_one);
+                                    k.x = (gabot_x * 2) + ((10 / 864) * w_width);
+                                    k.y = ((gabot_y * 3) + ((8 / 864) * w_width) + counter_one);
                                     x_origin = k.x + (x_common / 2);
                                     y_origin = k.y + (h_card / 2);
                                     k.rotation = '90,' + x_origin + ',' + y_origin;
@@ -262,16 +270,16 @@ export class HomeComponent implements OnInit {
                                     r_deg = '90';
                                 }
                                 else if ((counterAll >= 13 && counterAll <= 26) || (counterAll >= 53 && counterAll <= 66)) { // 
-                                    k.x = ((gabot_y * 2) + counter_two) + 4;
-                                    k.y = (gabot_x * 2) + 10;
+                                    k.x = ((gabot_y * 2) + counter_two) + ((4 / 864) * w_width);
+                                    k.y = (gabot_x * 2) + ((10 / 864) * w_width);
                                     x_origin = k.x + (h_card / 2);
                                     y_origin = k.y + (x_common / 2);
                                     k.rotation = '0,' + x_origin + ',' + y_origin;
                                     counter_two = counter_two + x_common;
                                 }
                                 else if ((counterAll >= 27 && counterAll <= 39) || (counterAll >= 67 && counterAll <= 79)) { // 
-                                    k.x = (gabot_x * 2) + 595;
-                                    k.y = ((gabot_y * 3) + 8 + counter_three);
+                                    k.x = (gabot_x * 2) + ((595 / 864) * w_width);
+                                    k.y = ((gabot_y * 3) + ((8 / 864) * w_width) + counter_three);
                                     x_origin = k.x + (x_common / 2);
                                     y_origin = k.y + (h_card / 2);
                                     k.rotation = '90,' + x_origin + ',' + y_origin;
@@ -350,9 +358,9 @@ export class HomeComponent implements OnInit {
 
                                 let _cardGame = new CardGame();
                                 _cardGame.loadCard(w_height, w_width, jsonRect, x_common, h_card, startTime, endTime, 1, ref_card);
-                                // firebase.database().ref('config').update({
-                                //     game_status: 'loaded'
-                                // })
+                                firebase.database().ref('config').update({
+                                    game_status: 'loaded'
+                                })
 
                             }, function (errorObject) {
                                 console.log("The read failed: " + errorObject.code);
@@ -394,6 +402,7 @@ export class HomeComponent implements OnInit {
 
 
     sortCards() {
+        let ref_card = firebase.database().ref("card");
         let p = d3.selectAll('[player="' + this._currentPlayer + '"]')._groups[0];
         let _c: Card[] = [];
         for (let i = 0; i < p.length; i++) {
@@ -401,23 +410,35 @@ export class HomeComponent implements OnInit {
             _c.push(_p);
         }
         console.log(p);
-        let sorted_cards = this.fn.sortCards(_c);
+        let sorted_cards = this._fn.sortCards(_c);
+        let x_common = this._x_common;
+        let h_card = this._h_card;
+        let w_width = this._width;
+        let w_height = this._height;
         sorted_cards.forEach(function (e) {
             let _idRect = 'rect#idrect-' + e.id;
             let _idImg = 'image#idImg-' + e.id;
             d3.select(_idRect).attr('x', e.x);
             d3.select(_idImg).attr('x', e.x);
-
-            // ref_card.child(e.id).set({
-            //     id: k.id,
-            //     x: k.x / w_width,
-            //     y: k.y / w_height,
-            //     isFront: true,
-            //     group: k.group,
-            //     player: k.player,
-            //     rotation: '90,' + (x_origin / w_width) + ',' + (y_origin / w_height)
-            // })
+            let x_origin = e.x + (x_common / 2);
+            let y_origin = e.y + (h_card / 2);
+            ref_card.child(e.id).set({
+                id: e.id,
+                x: e.x / w_width,
+                y: e.y / w_height,
+                isFront: true,
+                group: e.group,
+                player: e.player,
+                rotation: '0,' + (x_origin / w_width) + ',' + (y_origin / w_height)
+            })
         })
+    }
+
+    rotateSVG() {
+        let deg_rot = d3.select('svg#graphID').attr('transform');
+        deg_rot = parseInt((deg_rot.replace('rotate', '').replace('(', '').replace(')', '')));
+        deg_rot += 90;
+        d3.select('svg#graphID').attr('transform', 'rotate(' + deg_rot + ')');
     }
 }
 
